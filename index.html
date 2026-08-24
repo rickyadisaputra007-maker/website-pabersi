@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PABERSI Tuban Cabang Soko - Portal v2.0</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white">
+
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 w-full bg-slate-950/80 backdrop-blur-md border-b border-slate-800 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- LOGO RESMI PABERSI -->
+                <div class="w-10 h-10 rounded-xl bg-white/5 border border-slate-800 flex items-center justify-center p-1 shadow-lg shadow-red-600/10 overflow-hidden">
+                    <img src="logo-pabersi.png" alt="Logo PABERSI" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-sm md:text-base tracking-wider text-white">PABERSI TUBAN</h1>
+                    <p class="text-xs text-red-500 font-semibold tracking-wide">CABANG SOKO - V2</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="gantiSlide('slide-login')" class="text-xs bg-slate-900 border border-slate-800 hover:border-red-500/50 px-4 py-2 rounded-xl transition text-slate-300">
+                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Login / Home
+                </button>
+                <button onclick="cekAksesAdmin()" class="text-xs bg-red-600/10 border border-red-500/30 text-red-400 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-gauge mr-1.5"></i> Dashboard Admin
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER (SLIDE SYSTEM) -->
+    <main class="pt-28 pb-20 min-h-screen">
+
+        <!-- ================= SLIDE 1: PORTAL LOGIN & REGISTRASI ATLET ================= -->
+        <section id="slide-login" class="slide-content max-w-4xl mx-auto px-6">
+            <div class="text-center mb-10">
+                <span class="inline-block bg-red-500/10 text-red-500 border border-red-500/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                    Portal Terpadu Soko
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black tracking-tight mb-4">MASUK ATAU DAFTAR AKUN ATLET</h2>
+                <p class="text-slate-400 text-sm max-w-xl mx-auto">Silakan login jika sudah punya akun, atau daftarkan diri Anda sebagai atlet baru PABERSI Cabang Soko.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Kotak Login -->
+                <div class="bg-slate-900/60 border border-slate-800 p-8 rounded-3xl shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
+                                <i class="fa-solid fa-user-lock"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Login Atlet</h3>
+                                <p class="text-xs text-slate-400">Masuk untuk upload berkas & profil</p>
+                            </div>
+                        </div>
+                        <form id="formLogin" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username</label>
+                                <input type="text" id="loginUsername" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+                                <input type="password" id="loginPassword" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red-500">
+                            </div>
+                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-red-600/20">
+                                Masuk Dashboard Atlet →
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Kotak Pendaftaran / Register -->
+                <div class="bg-slate-900/60 border border-slate-800 p-8 rounded-3xl shadow-xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Daftar Atlet Baru</h3>
+                            <p class="text-xs text-slate-400">Buat akun baru ke database</p>
+                        </div>
+                    </div>
+                    <form id="formRegister" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nama Lengkap</label>
+                            <input type="text" id="regNama" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Kategori / Kelas Angkatan</label>
+                            <input type="text" id="regKategori" required placeholder="Contoh: 74 Kg Putra" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-red-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">No. WhatsApp</label>
+                            <input type="text" id="regHp" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-red-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username</label>
+                                <input type="text" id="regUser" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+                                <input type="password" id="regPass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500">
+                            </div>
+                        </div>
+                        <button type="submit" id="btnReg" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">
+                            Daftar Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SLIDE 1.5: LOGIN ADMIN ================= -->
+        <section id="slide-login-admin" class="slide-content max-w-md mx-auto px-6 hidden">
+            <div class="bg-slate-900/80 border border-slate-800 p-8 rounded-3xl shadow-2xl">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 bg-red-600/20 border border-red-500/30 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h2 class="text-xl font-black">LOGIN ADMIN PENGURUS</h2>
+                    <p class="text-xs text-slate-400 mt-1">Masukkan kredensial khusus pengurus PABERSI Soko.</p>
+                </div>
+                <form id="formLoginAdmin" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username Admin</label>
+                        <input type="text" id="adminUser" required placeholder="admin" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password Admin</label>
+                        <input type="password" id="adminPass" required placeholder="admin123" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-red-500">
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-red-600/20">
+                        Masuk Dashboard Admin →
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= SLIDE 2: DASHBOARD ADMIN ================= -->
+        <section id="slide-admin" class="slide-content max-w-7xl mx-auto px-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-xs font-bold text-red-500 tracking-widest uppercase mb-1 block">Panel Pengurus</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">DASHBOARD ADMIN PABERSI SOKO</h2>
+                    <p class="text-slate-400 text-xs mt-1">Monitor data seluruh atlet, status berkas, serta cek dan install/download foto/dokumen.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="muatDataAdmin()" class="bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs font-medium transition">
+                        <i class="fa-solid fa-rotate mr-2"></i> Refresh
+                    </button>
+                    <button onclick="logoutAdmin()" class="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-600 hover:text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> Keluar Admin
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/60 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/90 border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                                <th class="py-4 px-6">NAMA ATLET</th>
+                                <th class="py-4 px-6">KATEGORI</th>
+                                <th class="py-4 px-6">NO HP</th>
+                                <th class="py-4 px-6">KREDENSIAL</th>
+                                <th class="py-4 px-6">STATUS BERKAS</th>
+                                <th class="py-4 px-6 text-center">LIHAT & DOWNLOAD FOTO</th>
+                                <th class="py-4 px-6 text-right">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelAdminBody" class="text-sm divide-y divide-slate-800/60">
+                            <tr><td colspan="7" class="text-center py-6 text-slate-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SLIDE 3: DASHBOARD ATLET & UPLOAD BERKAS ================= -->
+        <section id="slide-atlet" class="slide-content max-w-4xl mx-auto px-6 hidden">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-slate-800 gap-4">
+                    <div>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                            Sesi Atlet Aktif
+                        </span>
+                        <h2 id="atletWelcomeTitle" class="text-2xl font-black mt-2">Selamat Datang, Atlet</h2>
+                        <p id="atletDetailSub" class="text-xs text-slate-400 mt-0.5">Kategori: -</p>
+                    </div>
+                    <button onclick="logoutAtlet()" class="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl text-xs font-semibold transition">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> Keluar Akun
+                    </button>
+                </div>
+
+                <!-- Form Upload Berkas Dokumen & Foto -->
+                <form id="formUploadBerkas" class="mt-8 space-y-6">
+                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider border-l-2 border-red-600 pl-3">
+                        Upload Berkas Persyaratan & Identitas Atlet
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-2xl">
+                            <label class="block text-xs font-semibold text-slate-300 mb-2"><i class="fa-solid fa-image text-red-500 mr-1.5"></i> Pas Foto Atlet (3x4 / 4x6)</label>
+                            <input type="file" id="fileFoto" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 cursor-pointer">
+                        </div>
+
+                        <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-2xl">
+                            <label class="block text-xs font-semibold text-slate-300 mb-2"><i class="fa-solid fa-id-card text-red-500 mr-1.5"></i> Scan / Foto KTP / KIA</label>
+                            <input type="file" id="fileKtp" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                        </div>
+
+                        <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-2xl">
+                            <label class="block text-xs font-semibold text-slate-300 mb-2"><i class="fa-solid fa-house-user text-red-500 mr-1.5"></i> Kartu Keluarga (KK)</label>
+                            <input type="file" id="fileKk" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                        </div>
+
+                        <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-2xl">
+                            <label class="block text-xs font-semibold text-slate-300 mb-2"><i class="fa-solid fa-notes-medical text-red-500 mr-1.5"></i> Kartu BPJS Kesehatan</label>
+                            <input type="file" id="fileBpjs" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                        </div>
+
+                        <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-2xl md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-300 mb-2"><i class="fa-solid fa-file-lines text-red-500 mr-1.5"></i> Akta Kelahiran</label>
+                            <input type="file" id="fileAkta" accept="image/*,application/pdf" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnUpload" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-red-600/30 text-sm">
+                        Simpan & Upload Semua Berkas ke Sistem
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL POPUP LIHAT & DOWNLOAD FOTO/BERKAS ATLET -->
+    <div id="modalBerkas" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
+                <h3 id="modalTitle" class="font-bold text-lg text-white">Detail Berkas Atlet</h3>
+                <button onclick="tutupModal()" class="text-slate-400 hover:text-white text-sm bg-slate-800 px-3 py-1.5 rounded-xl">Tutup ✕</button>
+            </div>
+            <div id="modalContent" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-[70vh] overflow-y-auto pr-2">
+                <!-- Diisi via Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase Logic -->
+    <script>
+        const SUPABASE_URL = 'https://olglzzracstetrspozgo.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_EIizZkE10Se1XPbT7Pdt8w_Y7vuLVmL';
+
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentAtletSession = JSON.parse(localStorage.getItem('pabersi_atlet_session')) || null;
+        let isAdminLoggedIn = localStorage.getItem('pabersi_admin_logged') === 'true';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentAtletSession) {
+                bukaDashboardAtlet(currentAtletSession);
+            }
+        });
+
+        function gantiSlide(slideId) {
+            document.querySelectorAll('.slide-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(slideId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Kontrol Akses Admin dengan Password
+        function cekAksesAdmin() {
+            if (isAdminLoggedIn) {
+                gantiSlide('slide-admin');
+                muatDataAdmin();
+            } else {
+                gantiSlide('slide-login-admin');
+            }
+        }
+
+        document.getElementById('formLoginAdmin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+
+            if (u === 'admin' && p === 'pabersisoko') {
+                isAdminLoggedIn = true;
+                localStorage.setItem('pabersi_admin_logged', 'true');
+                gantiSlide('slide-admin');
+                muatDataAdmin();
+            } else {
+                alert('Login Admin Gagal! Username atau Password salah.');
+            }
+        });
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem('pabersi_admin_logged');
+            gantiSlide('slide-login');
+        }
+
+        function bukaDashboardAtlet(atletData) {
+            currentAtletSession = atletData;
+            localStorage.setItem('pabersi_atlet_session', JSON.stringify(atletData));
+            document.getElementById('atletWelcomeTitle').textContent = `Selamat Datang, ${atletData.nama_lengkap || atletData.NAMA_LENGKAP || 'Atlet'}`;
+            document.getElementById('atletDetailSub').textContent = `Kategori: ${atletData.kategori || atletData.KATEGORI || '-'} | Username: ${atletData.username || atletData.USERNAME || '-'}`;
+            gantiSlide('slide-atlet');
+        }
+
+        // 1. Registrasi Atlet Baru
+        document.getElementById('formRegister').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnReg');
+            btn.disabled = true;
+            btn.textContent = 'Mendaftarkan...';
+
+            const payload = {
+                nama_lengkap: document.getElementById('regNama').value,
+                kategori: document.getElementById('regKategori').value,
+                no_hp: document.getElementById('regHp').value,
+                username: document.getElementById('regUser').value,
+                password: document.getElementById('regPass').value,
+                berkas_status: 'Belum Upload Berkas'
+            };
+
+            const { error } = await _supabase.from('ATLET').insert([payload]);
+
+            if (error) {
+                alert('Pendaftaran Gagal: ' + error.message);
+            } else {
+                alert('Pendaftaran Berhasil! Silakan login menggunakan username dan password Anda.');
+                document.getElementById('formRegister').reset();
+            }
+            btn.disabled = false;
+            btn.textContent = 'Daftar Sekarang';
+        });
+
+        // 2. Login Atlet
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value;
+            const p = document.getElementById('loginPassword').value;
+
+            const { data, error } = await _supabase.from('ATLET').select('*').eq('username', u).eq('password', p);
+
+            if (data && data.length > 0) {
+                bukaDashboardAtlet(data[0]);
+            } else {
+                alert('Login Gagal! Username atau Password salah.');
+            }
+        });
+
+        function logoutAtlet() {
+            currentAtletSession = null;
+            localStorage.removeItem('pabersi_atlet_session');
+            document.getElementById('formLogin').reset();
+            gantiSlide('slide-login');
+        }
+
+        // 3. Upload Berkas ke Supabase Storage & Update Database
+        document.getElementById('formUploadBerkas').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentAtletSession) {
+                alert('Sesi login tidak valid. Silakan login ulang.');
+                logoutAtlet();
+                return;
+            }
+
+            const rowId = currentAtletSession.id || currentAtletSession.ID;
+            const rowUsername = currentAtletSession.username || currentAtletSession.USERNAME;
+
+            const btn = document.getElementById('btnUpload');
+            btn.disabled = true;
+            btn.textContent = 'Mengunggah Berkas ke Cloud...';
+
+            try {
+                const files = {
+                    foto: document.getElementById('fileFoto').files[0],
+                    ktp: document.getElementById('fileKtp').files[0],
+                    kk: document.getElementById('fileKk').files[0],
+                    bpjs: document.getElementById('fileBpjs').files[0],
+                    akta: document.getElementById('fileAkta').files[0]
+                };
+
+                let updateData = { berkas_status: 'Lengkap' };
+                const folderId = rowId || rowUsername;
+
+                for (let key in files) {
+                    if (files[key]) {
+                        const file = files[key];
+                        const cleanFileName = file.name.replace(/\s+/g, '_');
+                        const filePath = `atlet_${folderId}/${key}_${Date.now()}_${cleanFileName}`;
+                        
+                        const { error: uploadError } = await _supabase.storage.from('berkas-atlet').upload(filePath, file);
+                        if (uploadError) throw uploadError;
+
+                        const { data: publicUrlData } = _supabase.storage.from('berkas-atlet').getPublicUrl(filePath);
+                        updateData[`url_${key}`] = publicUrlData.publicUrl;
+                    }
+                }
+
+                let query = _supabase.from('ATLET').update(updateData);
+                if (rowId) {
+                    query = query.eq('id', rowId);
+                } else {
+                    query = query.eq('username', rowUsername);
+                }
+
+                const { error: updateError } = await query;
+                if (updateError) throw updateError;
+
+                alert('Berhasil! Semua berkas persyaratan atlet telah diunggah.');
+            } catch (err) {
+                alert('Gagal mengunggah berkas: ' + err.message);
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Simpan & Upload Semua Berkas ke Sistem';
+        });
+
+        // 4. Load Data untuk Admin Dashboard
+        async function muatDataAdmin() {
+            const tbody = document.getElementById('tabelAdminBody');
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Memuat data...</td></tr>`;
+            
+            const { data, error } = await _supabase.from('ATLET').select('*');
+
+            if (error || !data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Belum ada data atlet terdaftar.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                const rowId = item.id || item.ID;
+                const rowUsername = item.username || item.USERNAME || '';
+                const nama = item.nama_lengkap || item.NAMA_LENGKAP || '-';
+                const kategori = item.kategori || item.KATEGORI || '-';
+                const hp = item.no_hp || item.NO_HP || '-';
+                const usr = item.username || item.USERNAME || '-';
+                const statusBerkas = item.berkas_status || item.BERKAS_STATUS || 'Belum Upload Berkas';
+
+                const badgeStatus = statusBerkas === 'Lengkap' 
+                    ? `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-md text-xs"><i class="fa-solid fa-circle-check"></i> Lengkap</span>`
+                    : `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-md text-xs">Belum Lengkap</span>`;
+
+                const btnLihat = `
+                    <button onclick='bukaModalBerkas(${JSON.stringify(item)})' class="bg-blue-500/10 text-blue-400 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg text-xs transition border border-blue-500/20">
+                        <i class="fa-solid fa-folder-open mr-1"></i> Cek & Download Foto
+                    </button>
+                `;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/30 transition">
+                        <td class="py-4 px-6 font-semibold text-white">${nama}</td>
+                        <td class="py-4 px-6 text-slate-300">${kategori}</td>
+                        <td class="py-4 px-6 text-slate-400 text-xs">${hp}</td>
+                        <td class="py-4 px-6 font-mono text-xs text-slate-400">User: ${usr}</td>
+                        <td class="py-4 px-6">${badgeStatus}</td>
+                        <td class="py-4 px-6 text-center">${btnLihat}</td>
+                        <td class="py-4 px-6 text-right">
+                            <button onclick="hapusAtlet('${rowId}', '${rowUsername}')" class="bg-red-500/10 text-red-400 hover:bg-red-600 hover:text-white px-3 py-1.5 rounded-lg text-xs transition border border-red-500/20">
+                                <i class="fa-solid fa-trash-can mr-1"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function bukaModalBerkas(item) {
+            const modal = document.getElementById('modalBerkas');
+            const content = document.getElementById('modalContent');
+            const title = document.getElementById('modalTitle');
+            
+            title.textContent = `Berkas Atlet: ${item.nama_lengkap || item.NAMA_LENGK_KAP}`;
+            content.innerHTML = '';
+
+            const docs = [
+                { label: 'Pas Foto', url: item.url_foto || item.URL_FOTO },
+                { label: 'KTP / KIA', url: item.url_ktp || item.URL_KTP },
+                { label: 'Kartu Keluarga', url: item.url_kk || item.URL_KK },
+                { label: 'BPJS Kesehatan', url: item.url_bpjs || item.URL_BPJS },
+                { label: 'Akta Kelahiran', url: item.url_akta || item.URL_AKTA }
+            ];
+
+            let adaBerkas = false;
+            docs.forEach(doc => {
+                if (doc.url) {
+                    adaBerkas = true;
+                    content.innerHTML += `
+                        <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-center flex flex-col justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-300 mb-2">${doc.label}</p>
+                                <a href="${doc.url}" target="_blank" class="block group relative overflow-hidden rounded-xl border border-slate-700 mb-3">
+                                    <img src="${doc.url}" alt="${doc.label}" class="w-full h-28 object-cover group-hover:scale-105 transition">
+                                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs text-white font-bold">Perbesar</div>
+                                </a>
+                            </div>
+                            <a href="${doc.url}" download target="_blank" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition block shadow-md shadow-red-600/20">
+                                <i class="fa-solid fa-download mr-1"></i> Download File
+                            </a>
+                        </div>
+                    `;
+                }
+            });
+
+            if (!adaBerkas) {
+                content.innerHTML = `<div class="col-span-full text-center py-8 text-slate-500 text-sm">Atlet ini belum mengunggah berkas apa pun.</div>`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function tutupModal() {
+            document.getElementById('modalBerkas').classList.add('hidden');
+        }
+
+        async function hapusAtlet(rowId, rowUsername) {
+            if (!confirm('Apakah kamu yakin ingin menghapus data atlet ini?')) return;
+
+            let query = _supabase.from('ATLET').delete();
+            
+            if (rowId && rowId !== 'undefined' && rowId !== 'null') {
+                query = query.eq('id', rowId);
+            } else if (rowUsername) {
+                query = query.eq('username', rowUsername);
+            } else {
+                alert('Gagal menghapus: Identitas baris tidak ditemukan.');
+                return;
+            }
+
+            const { error } = await query;
+
+            if (error) {
+                alert('Gagal menghapus data: ' + error.message);
+            } else {
+                alert('Data atlet berhasil dihapus!');
+                muatDataAdmin();
+            }
+        }
+    </script>
+</body>
+</html>
